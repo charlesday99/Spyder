@@ -1,4 +1,3 @@
-from mongoengine.errors import NotUniqueError
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import requests
@@ -6,14 +5,14 @@ import re
 
 from models import *
 
+blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml)"
+
 # Load credentials & connect to MongoDB
 with open('/etc/mongod.cred') as f:
     credentials = f.readlines()[0].strip()
 
 connect(host="mongodb://{}@iterator.me:27017/data".format(credentials))
 print("Connected to MongoDB...")
-
-blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov)"
 
 
 def is_file(url):
@@ -43,12 +42,16 @@ def get_domain(url):
 def load_or_create_website(domain):
     websites = Website.objects(domain=domain)
 
+    # Check if website exists
     if len(websites) == 0:
-        website = Website(domain=domain).save()
-        Page(url=domain, domain=website, tags=["new"]).save()
+        try:
+            website = Website(domain=domain).save()
+            Page(url=domain, domain=website, tags=["new"]).save()
 
-        print(f"    Created website: {website.domain}")
-        return website
+            print(f"    Created website: {website.domain}")
+            return website
+        except:
+            return Website.objects(domain=domain)[0]
     else:
         return websites[0]
 
@@ -56,12 +59,14 @@ def load_or_create_website(domain):
 def save_or_create_page(link, domain, linked_from=None):
     pages = Page.objects(url=link)
 
+    # Check if page exists
     if len(pages) == 0:
         try:
             page = Page(url=link, domain=domain, tags=["new"]).save()
-            print(f"    Saved: {link}")
-        except NotUniqueError:
-            print(f"    NotUniqueError: {link}")
+            print(f"        Saved: {link}")
+        except:
+            print(f"        NotUniqueError: {link}")
+            return
     else:
         page = pages[0]
 
@@ -69,7 +74,7 @@ def save_or_create_page(link, domain, linked_from=None):
         if linked_from not in page.linked_from:
             page.linked_from.append(linked_from)
             page.save()
-            print(f"    Added link from {linked_from.domain} to {link}")
+            print(f"        Added link from {linked_from.domain} to {link}")
 
 
 def process_page(page, html, verbose=False):
@@ -80,7 +85,7 @@ def process_page(page, html, verbose=False):
     for a_tag in soup.findAll('a'):
         href = a_tag.get('href')
 
-        # Check href is valid
+        # Validate href
         if href is None:
             continue
         if href == '/':
@@ -97,12 +102,16 @@ def process_page(page, html, verbose=False):
             href = href.split('?')[0]
         if len(href) == 0:
             continue
+
+        # Upgrade to https
+        if href[0:5] == 'http:':
+            href = 'https:' + href[5:]
         
         if verbose:
-            print(f"    Processing: {href}")
+            print(f"        Processing: {href}")
 
         # Check for relative url
-        if 'https' == href[0:5]:
+        if href[0:5] == 'https':
 
             if get_domain(href) == None:
                 continue
