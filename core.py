@@ -86,6 +86,10 @@ def process_page(page, html, verbose=False):
             continue
         if href[-4:] == '.jpg':
             continue
+        if href[-5:] == '.usdz':
+            continue
+        if href[-5:] == '.m3u8':
+            continue
         if href[0:5] == 'http:':
             continue
 

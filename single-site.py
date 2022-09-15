@@ -1,5 +1,3 @@
-import threading
-import queue
 import sys
 
 from core import *
