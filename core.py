@@ -48,9 +48,9 @@ def save_or_create_page(link, domain, linked_from=None):
     if len(pages) == 0:
         try:
             page = Page(url=link, domain=domain, tags=["new"]).save()
-            print(f"       Saved: {link}")
+            print(f"    Saved: {link}")
         except mongoengine.errors.NotUniqueError:
-            print(f"NotUniqueError: {link}")
+            print(f"    NotUniqueError: {link}")
     else:
         page = pages[0]
 
@@ -58,7 +58,7 @@ def save_or_create_page(link, domain, linked_from=None):
         if linked_from not in page.linked_from:
             page.linked_from.append(linked_from)
             page.save()
-            print(f"        Added link from {linked_from.domain} to {link}")
+            print(f"    Added link from {linked_from.domain} to {link}")
 
 
 def process_page(page, html, verbose=False):

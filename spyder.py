@@ -32,7 +32,6 @@ def main():
 
         for page in Page.objects(tags='new'):
             worker_queue.put(page)
-            print(f"Added job.")
 
 
 if __name__ == "__main__":
