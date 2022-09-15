@@ -5,7 +5,7 @@ import re
 
 from models import *
 
-blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml)"
+blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git)$"
 
 # Load credentials & connect to MongoDB
 with open('/etc/mongod.cred') as f:
