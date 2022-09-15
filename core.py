@@ -48,15 +48,18 @@ def get_domain(url):
                 return f"{parsed.scheme}://{url[0]}.{url[1]}/"
 
 
-def load_or_create_website(domain):
+def load_or_create_website(domain, linked_from=None):
     websites = Website.objects(domain=domain)
 
     # Check if website exists
     if len(websites) == 0:
-        print("Trying to create website")
         try:
             website = Website(domain=domain).save()
-            Page(url=domain, domain=website, tags=["new"]).save()
+
+            if linked_from is not None:
+                Page(url=domain, domain=website, tags=["new"], linked_from=linked_from).save()
+            else:
+                Page(url=domain, domain=website, tags=["new"]).save()
 
             alert(f"Created website: {website.domain}", '|')
             return website
@@ -128,7 +131,7 @@ def process_page(page, html, verbose=False):
 
             # Check if link is an external domain
             if get_domain(href) != website.domain:
-                external_website = load_or_create_website(get_domain(href))
+                external_website = load_or_create_website(get_domain(href), linked_from=website)
                 save_or_create_page(href, external_website, linked_from=website)
             else:
                 save_or_create_page(href, website)

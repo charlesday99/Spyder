@@ -20,7 +20,7 @@ def main():
     workers_count = 10
 
     # Create default website
-    load_or_create_website(get_domain("https://python.org/"))
+    load_or_create_website(get_domain("https://bbc.co.uk/"))
 
     # Create workers
     worker_queue = queue.Queue(maxsize=workers_count)
