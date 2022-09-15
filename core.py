@@ -57,7 +57,7 @@ def load_or_create_website(domain, linked_from=None):
             website = Website(domain=domain).save()
 
             if linked_from is not None:
-                Page(url=domain, domain=website, tags=["new"], linked_from=linked_from).save()
+                Page(url=domain, domain=website, tags=["new"], linked_from=[linked_from]).save()
             else:
                 Page(url=domain, domain=website, tags=["new"]).save()
 
@@ -116,9 +116,9 @@ def process_page(page, html, verbose=False):
         if len(href) == 0:
             continue
 
-        # Upgrade to https
+        # Skip http links
         if href[0:5] == 'http:':
-            href = 'https:' + href[5:]
+            continue
         
         if verbose:
             print(f"        Processing: {href}")
