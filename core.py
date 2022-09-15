@@ -5,7 +5,7 @@ import re
 
 from models import *
 
-blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git)$"
+blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg)$"
 
 # Load credentials & connect to MongoDB
 with open('/etc/mongod.cred') as f:
@@ -22,11 +22,20 @@ def is_file(url):
         return False
 
 
+def alert(text, border):
+    print(f"    {border}")
+    print(f"    {border} {str(text)}")
+    print(f"    {border}")
+
+
 def get_domain(url):
     parsed = urlparse(url)
     if parsed.netloc == '':
         return None
     else:
+        if parsed.netloc.count('.') == 0:
+            alert(f"Bad domain: {url}", '!')
+            return None
         if parsed.netloc.count('.') == 1:
             return f"{parsed.scheme}://{parsed.netloc}/"
         else:
@@ -44,11 +53,12 @@ def load_or_create_website(domain):
 
     # Check if website exists
     if len(websites) == 0:
+        print("Trying to create website")
         try:
             website = Website(domain=domain).save()
             Page(url=domain, domain=website, tags=["new"]).save()
 
-            print(f"    Created website: {website.domain}")
+            alert(f"Created website: {website.domain}", '|')
             return website
         except:
             return Website.objects(domain=domain)[0]
@@ -63,9 +73,9 @@ def save_or_create_page(link, domain, linked_from=None):
     if len(pages) == 0:
         try:
             page = Page(url=link, domain=domain, tags=["new"]).save()
-            print(f"        Saved: {link}")
+            print(f"    Saved: {link}")
         except:
-            print(f"        NotUniqueError: {link}")
+            print(f"    NotUniqueError: {link}")
             return
     else:
         page = pages[0]
@@ -74,7 +84,7 @@ def save_or_create_page(link, domain, linked_from=None):
         if linked_from not in page.linked_from:
             page.linked_from.append(linked_from)
             page.save()
-            print(f"        Added link from {linked_from.domain} to {link}")
+            print(f"    Added link from {linked_from.domain} to {link}")
 
 
 def process_page(page, html, verbose=False):
@@ -142,7 +152,7 @@ def request_page(page, verbose=False):
                 process_page(page, resp.text, verbose=verbose)
                 page.tags.append('processed')
             else:
-                print(f"    !!! File found: {resp.headers['Content-Type']} !!!")
+                alert(f"File found: {resp.headers['Content-Type']}", '!')
                 page.tags.append('file')
         else:
             print(f"    !!! Request failed with code {resp.status_code} !!!")
