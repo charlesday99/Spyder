@@ -1,7 +1,5 @@
-import sys
-
 from core import *
-
+import sys
 
 def main():
     # Load url
@@ -23,10 +21,9 @@ def main():
         print(f"Requesting url: {url}")
         request_page(page, verbose=True)
 
-        print(f"Finished crawling for {url}!")
+        print(f"Finished crawling for {url}")
     else:
-        print(f"Failed to load {url}!")
-
+        print(f"Failed to load {url}")
 
 if __name__ == "__main__":
     main()

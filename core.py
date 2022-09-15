@@ -1,6 +1,8 @@
+from mongoengine.errors import NotUniqueError
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import requests
+import re
 
 from models import *
 
@@ -10,6 +12,15 @@ with open('/etc/mongod.cred') as f:
 
 connect(host="mongodb://{}@iterator.me:27017/data".format(credentials))
 print("Connected to MongoDB...")
+
+blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov)"
+
+
+def is_file(url):
+    if len(re.findall(blocked_files, url)) != 0:
+        return True
+    else:
+        return False
 
 
 def get_domain(url):
@@ -49,7 +60,7 @@ def save_or_create_page(link, domain, linked_from=None):
         try:
             page = Page(url=link, domain=domain, tags=["new"]).save()
             print(f"    Saved: {link}")
-        except mongoengine.errors.NotUniqueError:
+        except NotUniqueError:
             print(f"    NotUniqueError: {link}")
     else:
         page = pages[0]
@@ -78,21 +89,15 @@ def process_page(page, html, verbose=False):
             continue
         if 'mailto:' in href:
             continue
+        if is_file(href):
+            continue
+
+        # Remove parameters
         if '?' in href:
             href = href.split('?')[0]
         if len(href) == 0:
             continue
-        if href[-4:] == '.pdf':
-            continue
-        if href[-4:] == '.jpg':
-            continue
-        if href[-5:] == '.usdz':
-            continue
-        if href[-5:] == '.m3u8':
-            continue
-        if href[0:5] == 'http:':
-            continue
-
+        
         if verbose:
             print(f"    Processing: {href}")
 
@@ -123,8 +128,13 @@ def request_page(page, verbose=False):
         resp = requests.get(page.url, timeout=5)
 
         if resp.status_code == 200:
-            process_page(page, resp.text, verbose=verbose)
-            page.tags.append('processed')
+            
+            if 'text/html' in resp.headers['Content-Type']:
+                process_page(page, resp.text, verbose=verbose)
+                page.tags.append('processed')
+            else:
+                print(f"    !!! File found: {resp.headers['Content-Type']} !!!")
+                page.tags.append('file')
         else:
             print(f"    !!! Request failed with code {resp.status_code} !!!")
             page.tags.append('failed')
