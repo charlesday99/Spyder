@@ -30,8 +30,16 @@ def main():
     # Iterate through all new pages
     while Page.objects(tags='new').count() != 0:
 
-        for page in Page.objects(tags='new'):
-            worker_queue.put(page)
+        for website in Website.objects():
+            print(f"\nScanning website: {website.domain}")
+            page_count = workers_count * 2
+
+            for page in Page.objects(tags='new', domain=website):
+                if page_count != 0:
+                    worker_queue.put(page)
+                    page_count -= 1
+                else:
+                    break
 
 
 if __name__ == "__main__":
