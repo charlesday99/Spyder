@@ -1,0 +1,11 @@
+[Unit]
+Description=Spyder Crawling Service
+After=network.target
+
+[Service]
+Type=simple
+User=
+ExecStart=/usr/bin/python3 /opt/spyder/spyder.py
+
+[Install]
+WantedBy=multi-user.target

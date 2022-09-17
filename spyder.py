@@ -17,7 +17,7 @@ def worker(id, queue):
 
 
 def main():
-    workers_count = 10
+    workers_count = 5
 
     # Create default website
     load_or_create_website(get_domain("https://bbc.co.uk/"))
