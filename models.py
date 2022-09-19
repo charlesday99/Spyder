@@ -2,14 +2,26 @@ from mongoengine import *
 
 class Website(Document):
     domain = StringField(required=True, unique=True)
+    ranking = IntField()
     tags = ListField(StringField())
+
+    meta = {'indexes': [{
+        'fields': ['$domain'],
+        'default_language': 'english',
+    }]}
 
 class Page(Document):
+    title = StringField()
     url = StringField(required=True, unique=True)
     domain = ReferenceField(Website, reverse_delete_rule=CASCADE, required=True)
-    tags = ListField(StringField())
     linked_from = ListField(ReferenceField(Website))
+    tags = ListField(StringField())
 
+    meta = {'indexes': [{
+        'fields': ['$title'],
+        'default_language': 'english',
+    }]}
+    
     def add_tag(self, tag):
         if tag not in self.tags:
             self.tags.append(tag)

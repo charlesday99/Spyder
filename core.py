@@ -5,7 +5,7 @@ import re
 
 from models import *
 
-blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg)$"
+blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg|xlsx|xls|rss|gif|atom)$"
 
 # Load credentials & connect to MongoDB
 with open('/etc/mongod.cred') as f:
@@ -93,6 +93,10 @@ def save_or_create_page(link, domain, linked_from=None):
 def process_page(page, html, verbose=False):
     soup = BeautifulSoup(html, 'html.parser')
     website = page.domain
+
+    if soup.title.get_text() is not None:
+        page.title = soup.title.get_text()
+        page.save()
 
     # Iterate though all links
     for a_tag in soup.findAll('a'):
