@@ -109,7 +109,7 @@ def process_page(page, html, verbose=False):
         page.save()
 
     description = soup.find("meta", property="og:description")
-    if description is not None:
+    if description is not None and 'content' in description:
         page.description = description['content'][0:300]
         page.save()
 
