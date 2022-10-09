@@ -12,7 +12,7 @@ class Website(Document):
 
 class Page(Document):
     title = StringField()
-    description = StringField(max_length=100)
+    description = StringField(max_length=300)
     url = StringField(required=True, unique=True)
 
     domain = ReferenceField(Website, reverse_delete_rule=CASCADE, required=True)
