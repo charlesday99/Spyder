@@ -1,20 +1,20 @@
 from urllib.parse import urlparse
+from datetime import datetime
 from bs4 import BeautifulSoup
+from mongoengine import *
 import traceback
 import requests
 import re
 
-from models import *
-
 blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg|xlsx|xls|rss|gif|atom)$"
 double_domains = ['.co.uk','.uk.com','org.uk','ac.uk','com.au','europa.eu','co.jp','com.br','edu.au','gov.au','com.tr','co.nz','co.za','com.cn','org.au']
 
-# Load credentials & connect to MongoDB
-with open('/etc/mongod.cred') as f:
-    credentials = f.readlines()[0].strip()
 
-connect(host="mongodb://{}@iterator.me:27017/data".format(credentials))
-print("Connected to MongoDB...")
+def db_connect():
+    with open('/etc/mongod.cred') as f:
+        credentials = f.readlines()[0].strip()
+        connect(host="mongodb://{}@iterator.me:27017/data".format(credentials))
+        print('Connected to MongoDB!')
 
 
 def is_file(url):
@@ -27,6 +27,8 @@ def is_file(url):
 def log_exception(e):
     with open("/tmp/exceptions.log","a+") as f:
         f.write(traceback.format_exc())
+        f.write("At:\n")
+        f.write(str(datetime.now()))
         f.write("---\n")
 
 
@@ -185,3 +187,41 @@ def request_page(page, verbose=False):
     if 'new' in page.tags:
         page.tags.remove('new')
     page.save()
+
+
+class Website(Document):
+    domain = StringField(required=True, unique=True)
+    ranking = IntField()
+    tags = ListField(StringField())
+
+    meta = {'indexes': [{
+        'fields': ['$domain'],
+        'default_language': 'english',
+    }]}
+
+
+class Page(Document):
+    title = StringField()
+    description = StringField(max_length=300)
+    url = StringField(required=True, unique=True)
+
+    domain = ReferenceField(Website, reverse_delete_rule=CASCADE, required=True)
+    linked_from = ListField(ReferenceField(Website))
+    tags = ListField(StringField())
+
+    meta = {'indexes': [
+        {'fields': ['$title', "$description"],
+         'default_language': 'english',
+         'weights': {'title': 10, 'content': 5}
+        }
+    ]}
+    
+    def add_tag(self, tag):
+        if tag not in self.tags:
+            self.tags.append(tag)
+            self.save()
+
+    def remove_tag(self, tag):
+        if tag in self.tags:
+            self.tags.remove(tag)
+            self.save()

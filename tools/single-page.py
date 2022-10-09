@@ -1,5 +1,6 @@
-from core import *
 import sys
+sys.path.append('../')
+from indexer.core import *
 
 def main():
     # Load url
@@ -26,4 +27,5 @@ def main():
         print(f"Failed to load {url}")
 
 if __name__ == "__main__":
+    db_connect()
     main()

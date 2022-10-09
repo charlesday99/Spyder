@@ -1,8 +1,9 @@
+import sys
+sys.path.append('../')
+from indexer.core import *
+
 import threading
 import queue
-
-from core import *
-
 
 def worker(id, queue):
     print(f"Worker [{id}] started")
@@ -18,7 +19,6 @@ def worker(id, queue):
             log_exception(e)
         finally:
             queue.task_done()
-
 
 
 def main():
@@ -48,4 +48,5 @@ def main():
 
 
 if __name__ == "__main__":
+    db_connect()
     main()

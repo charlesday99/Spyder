@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Spyder Search{% endblock %}
+
+{% block description %}Spyder search page.{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+	<div class="header">
+		<text class="title_caption">{{ date }}</text>
+		<text class="title">Search</text>
+	</div>
+	<div class="gradient_row">
+		<form action="/search" method="GET">
+			<div>
+				<input name="q" value="" class="gradient_row_input"/>
+			</div>
+		</form>
+	</div>
+{% endblock %}

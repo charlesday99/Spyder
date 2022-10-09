@@ -1,0 +1,10 @@
+[Unit]
+Description=Spyder Crawling Indexer
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/spyder/tools/spyder.py
+
+[Install]
+WantedBy=multi-user.target
