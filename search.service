@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+User=charles
 ExecStart=/usr/bin/python3 /opt/spyder/web/app.py
 
 [Install]
