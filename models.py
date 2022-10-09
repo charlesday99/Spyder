@@ -12,15 +12,19 @@ class Website(Document):
 
 class Page(Document):
     title = StringField()
+    description = StringField(max_length=100)
     url = StringField(required=True, unique=True)
+
     domain = ReferenceField(Website, reverse_delete_rule=CASCADE, required=True)
     linked_from = ListField(ReferenceField(Website))
     tags = ListField(StringField())
 
-    meta = {'indexes': [{
-        'fields': ['$title'],
-        'default_language': 'english',
-    }]}
+    meta = {'indexes': [
+        {'fields': ['$title', "$description"],
+         'default_language': 'english',
+         'weights': {'title': 10, 'content': 5}
+        }
+    ]}
     
     def add_tag(self, tag):
         if tag not in self.tags:

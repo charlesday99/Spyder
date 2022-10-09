@@ -1,11 +1,13 @@
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+import traceback
 import requests
 import re
 
 from models import *
 
 blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg|xlsx|xls|rss|gif|atom)$"
+double_domains = ['.co.uk','.uk.com','org.uk','ac.uk','com.au','europa.eu','co.jp','com.br','edu.au','gov.au','com.tr','co.nz','co.za','com.cn','org.au']
 
 # Load credentials & connect to MongoDB
 with open('/etc/mongod.cred') as f:
@@ -20,6 +22,12 @@ def is_file(url):
         return True
     else:
         return False
+
+
+def log_exception(e):
+    with open("/tmp/exceptions.log","a+") as f:
+        f.write(traceback.format_exc())
+        f.write("---\n")
 
 
 def alert(text, border):
@@ -40,7 +48,7 @@ def get_domain(url):
             return f"{parsed.scheme}://{parsed.netloc}/"
         else:
             # Strip subdomains
-            if parsed.netloc[-6:] == ".co.uk":
+            if parsed.netloc[-6:] in double_domains:
                 url = parsed.netloc.split('.')[-3:]
                 return f"{parsed.scheme}://{url[0]}.{url[1]}.{url[2]}/"
             else:
@@ -94,8 +102,13 @@ def process_page(page, html, verbose=False):
     soup = BeautifulSoup(html, 'html.parser')
     website = page.domain
 
-    if soup.title.get_text() is not None:
+    if soup.title is not None:
         page.title = soup.title.get_text()
+        page.save()
+
+    description = soup.find("meta", property="og:description")
+    if description is not None:
+        page.description = description['content'][0:300]
         page.save()
 
     # Iterate though all links
@@ -153,7 +166,7 @@ def request_page(page, verbose=False):
     try:
         resp = requests.get(page.url, timeout=5)
 
-        if resp.status_code == 200:
+        if resp.status_code == 200 and 'Content-Type' in resp.headers:
             
             if 'text/html' in resp.headers['Content-Type']:
                 process_page(page, resp.text, verbose=verbose)

@@ -8,12 +8,17 @@ def worker(id, queue):
     print(f"Worker [{id}] started")
 
     while True:
-        page = queue.get()
+        try:
+            page = queue.get()
 
-        print(f"[{id}] Requesting url: {page.url}")
-        request_page(page)
+            print(f"[{id}] Requesting url: {page.url}")
+            request_page(page)
 
-        queue.task_done()
+        except Exception as e:
+            log_exception(e)
+        finally:
+            queue.task_done()
+
 
 
 def main():
