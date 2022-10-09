@@ -99,17 +99,7 @@ textarea:focus, input:focus{
 	.title {
 		color: white;
 	}
-	.gradient_button {
-		box-shadow: 0px 5px 10px #4c4c4c;
-	}
-	.selector {
-		color: white;
-		background-color: black;
-	}
-	#plus {
-		color: white;
-	}
-	.image-cell {
-		outline-color: black;	
+	.gradient_row {
+		box-shadow: none;
 	}
 }

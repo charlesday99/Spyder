@@ -4,10 +4,6 @@
 
 {% block description %}Spyder results page.{% endblock %}
 
-{% block extra_head %}
-
-{% endblock %}
-
 {% block content %}
 	<div class="header">
         <a href="/">
@@ -22,13 +18,15 @@
 		<div class="gradient_row">
 			<div class="gradient_row_title">{{ page.title }}</div>
             <div class="gradient_row_caption">{{ page.url }}</div>
+            {% if page.description is not none %}
             <div class="gradient_row_description">{{ page.description }}</div>
+            {% endif %}
 		</div>
 	</a>
     {% endfor %}
     {% else %}
     <div class="gradient_row">
-        <div class="gradient_row_title">No results found...</div>
+        <div class="gradient_row_title">No results found</div>
     </div>
     {% endif %}
 {% endblock %}
