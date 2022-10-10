@@ -32,19 +32,13 @@ def main():
     for id in range(workers_count):
         threading.Thread(target=worker, args=[id, worker_queue]).start()
 
-    # Iterate through all new pages
-    while Page.objects(tags='new').count() != 0:
-
+    while True:
+        # Iterate through all the websites
         for website in Website.objects():
             print(f"\nScanning website: {website.domain}")
-            page_count = workers_count * 2
 
-            for page in Page.objects(tags='new', domain=website):
-                if page_count != 0:
-                    worker_queue.put(page)
-                    page_count -= 1
-                else:
-                    break
+            for page in Page.objects(tags='new', domain=website).limit(50):
+                worker_queue.put(page)
 
 
 if __name__ == "__main__":
