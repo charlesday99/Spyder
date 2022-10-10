@@ -40,6 +40,7 @@ a {
 .gradient_row_caption {
 	color: lightgray;
 	font-size: 10pt;
+	overflow: hidden;
 }
 
 .gradient_row_description {

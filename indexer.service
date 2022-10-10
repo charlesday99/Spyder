@@ -2,8 +2,12 @@
 Description=Spyder Crawling Indexer
 After=network.target
 
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
 [Service]
-Type=simple
+Restart=on-failure
+RestartSec=5s
 User=charles
 WorkingDirectory=/opt/spyder/tools
 ExecStart=/usr/bin/python3 /opt/spyder/tools/spyder.py
