@@ -29,13 +29,18 @@ def worker(id, queue):
 
 def main():
     workers_count = 5
+    website_count = 0
 
     worker_queue = queue.Queue(maxsize=workers_count)
     for id in range(workers_count):
         threading.Thread(target=worker, args=[id, worker_queue]).start()
 
     for website in Website.objects():
+        website_count += 1
         worker_queue.put(website)
+
+        if (website_count % 100) == 0:
+            print(f" -  Queued website number: {website_count}")
 
     print("\nFinished!\n")
 
