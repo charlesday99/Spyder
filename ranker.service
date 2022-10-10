@@ -1,0 +1,16 @@
+[Unit]
+Description=Spyder Website Ranker
+After=network.target
+
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+User=charles
+WorkingDirectory=/opt/spyder/tools
+ExecStart=/usr/bin/python3 /opt/spyder/tools/rank-websites.py
+
+[Install]
+WantedBy=multi-user.target

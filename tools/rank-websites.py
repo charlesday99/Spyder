@@ -2,15 +2,11 @@ import sys
 sys.path.append('../')
 from indexer.core import *
 
-import threading
-import queue
+import time
 
-def worker(id, queue):
-    print(f"Worker [{id}] started")
-
+def main():
     while True:
-        try:
-            website = queue.get()
+        for website in Website.objects():
             linked_from_domains = set()
 
             for page in Page.objects(domain=website):
@@ -18,32 +14,11 @@ def worker(id, queue):
                     linked_from_domains.add(linked_domain)
 
             rank = len(linked_from_domains)
-            print(f"[{id}] Setting rank for {website.domain} as: {rank}")
+            print(f"Setting rank for {website.domain} as: {rank}")
             website.ranking = rank
+
             website.save()
-
-        except Exception as e:
-            log_exception(e)
-        finally:
-            queue.task_done()
-
-def main():
-    workers_count = 5
-    website_count = 0
-
-    worker_queue = queue.Queue(maxsize=workers_count)
-    for id in range(workers_count):
-        threading.Thread(target=worker, args=[id, worker_queue]).start()
-
-    for website in Website.objects():
-        website_count += 1
-        worker_queue.put(website)
-
-        if (website_count % 100) == 0:
-            print(f" -  Queued website number: {website_count}")
-
-    print("\nFinished!\n")
-
+            time.sleep(10)
 
 if __name__ == "__main__":
     db_connect()
