@@ -68,6 +68,12 @@ textarea:focus, input:focus{
     display: inline-grid;
 }
 
+.footer {
+    padding: 20px;
+    padding-top: 0px;
+    display: inline-grid;
+}
+
 .title {
 	color: black;
 	font-size: 30pt;
