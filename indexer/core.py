@@ -192,8 +192,10 @@ def request_page(page, verbose=False):
 class Website(Document):
     domain = StringField(required=True, unique=True)
     ranking = IntField()
+    last_ranked = DateTimeField(
+        default=datetime.utcfromtimestamp(0)
+    )
     tags = ListField(StringField())
-
     meta = {'indexes': [{
         'fields': ['$domain'],
         'default_language': 'english',

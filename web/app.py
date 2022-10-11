@@ -44,7 +44,18 @@ def results():
 
 @app.route("/rankings")
 def rankings():
-    return render_template('rankings.html')
+    global page_count
+    page = request.args.get('page') or 0
+    page_start = int(page)*20
+    page_end = int(page)*20+20
+
+    results = Website.objects.order_by('-ranking')[page_start:page_end]
+
+    return render_template(
+        'rankings.html',
+        results=results,
+        pages_count="{:,}".format(page_count),
+    )
 
 
 @app.route('/favicon.ico')
@@ -56,7 +67,7 @@ def favicon():
 def updatePageCount():
     global page_count
     while True:
-        page_count = Page.objects.count()
+        page_count = Page.objects(tags='processed').count()
         time.sleep(600)
 
 

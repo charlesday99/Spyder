@@ -33,12 +33,8 @@ def main():
         threading.Thread(target=worker, args=[id, worker_queue]).start()
 
     while True:
-        # Iterate through all the websites
-        for website in Website.objects():
-            print(f"\nScanning website: {website.domain}")
-
-            for page in Page.objects(tags='new', domain=website).limit(50):
-                worker_queue.put(page)
+        for page in Page.objects(tags='new'):
+            worker_queue.put(page)
 
 
 if __name__ == "__main__":

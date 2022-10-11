@@ -6,8 +6,10 @@ StartLimitIntervalSec=500
 StartLimitBurst=5
 
 [Service]
-Restart=on-failure
+Restart=always
 RestartSec=5s
+RuntimeMaxSec=1d
+
 User=charles
 WorkingDirectory=/opt/spyder/tools
 ExecStart=/usr/bin/python3 /opt/spyder/tools/spyder.py

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ query }}Spyder Website Rankings{% endblock %}
+
+{% block description %}Spyder website rankings page.{% endblock %}
+
+{% block content %}
+	<div class="header">
+        <a href="/">
+		    <text class="title_caption">Spyder Search</text>
+        </a>
+		<text class="title">Website Rankings</text>
+	</div>
+
+    {% for website in results %}
+	<a href="{{ website.domain }}">
+		<div class="gradient_row">
+			<div class="gradient_row_title">{{ website.domain }}</div>
+            <div class="gradient_row_caption">Score: {{ website.ranking }}</div>
+		</div>
+	</a>
+    {% endfor %}
+
+	<div class="footer">
+	    <text class="title_caption">Searched {{ pages_count }} pages</text>
+	</div>
+{% endblock %}
