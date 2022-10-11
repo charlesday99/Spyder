@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import time
 
 def main():
-    threshold = datetime.now() - timedelta(days=7)
+    threshold = datetime.now() - timedelta(days=10)
     raw_query = {'last_ranked': {'$lt': threshold }}
 
     count = Website.objects(__raw__=raw_query).count()

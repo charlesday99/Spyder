@@ -3,7 +3,7 @@ sys.path.append('../')
 from indexer.core import *
 
 from flask import Flask, render_template, request, abort, send_from_directory
-from datetime import datetime
+from datetime import datetime, timedelta
 from threading import Thread
 import time
 import os
@@ -12,6 +12,7 @@ app = Flask(__name__,static_url_path='')
 db_connect()
 
 page_count = 0
+ranked_count = 0
 
 
 @app.route("/")
@@ -44,7 +45,7 @@ def results():
 
 @app.route("/rankings")
 def rankings():
-    global page_count
+    global ranked_count
     page = request.args.get('page') or 0
     page_start = int(page)*20
     page_end = int(page)*20+20
@@ -54,7 +55,7 @@ def rankings():
     return render_template(
         'rankings.html',
         results=results,
-        pages_count="{:,}".format(page_count),
+        ranked_count="{:,}".format(ranked_count),
     )
 
 
@@ -66,8 +67,14 @@ def favicon():
 
 def updatePageCount():
     global page_count
+    global ranked_count
     while True:
         page_count = Page.objects(tags='processed').count()
+
+        threshold = datetime.now() - timedelta(days=10)
+        raw_query = {'last_ranked': {'$gt': threshold }}
+        ranked_count = Website.objects(__raw__=raw_query).count()
+
         time.sleep(600)
 
 
