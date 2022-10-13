@@ -5,7 +5,7 @@
 {% block description %}Spyder website rankings page.{% endblock %}
 
 {% block content %}
-	<div class="header">
+	<div class="header" style="display: grid;">
         <a href="/">
 		    <text class="title_caption">Spyder Search</text>
         </a>
@@ -24,4 +24,19 @@
 	<div class="footer">
 	    <text class="title_caption">Ranked {{ ranked_count }} websites</text>
 	</div>
+
+	<ul class="number_row rounded_border">
+        {% for page_number in range(page_numbers) %}
+        <li>
+            {% if page_number|int() == current_page_number|int() %}
+            <text class="number_row_text bold">{{page_number}}</text>
+            {% else %}
+            <a href="/rankings?page={{ page_number }}">
+                <text class="number_row_text">{{page_number}}</text>
+            </a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+	<br>
 {% endblock %}

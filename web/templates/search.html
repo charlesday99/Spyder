@@ -5,15 +5,13 @@
 {% block description %}Spyder search page.{% endblock %}
 
 {% block content %}
-	<div class="header">
+	<div class="header" style="display: grid;">
 		<text class="title_caption">{{ date }}</text>
 		<text class="title">Search</text>
 	</div>
 	<div class="gradient_row">
 		<form action="/search" method="GET">
-			<div>
-				<input name="q" value="" class="gradient_row_input"/>
-			</div>
+			<input name="q" value="" class="gradient_row_input"/>
 		</form>
 	</div>
 	<a href="/rankings">

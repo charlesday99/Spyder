@@ -14,6 +14,9 @@ db_connect()
 page_count = 0
 ranked_count = 0
 
+ranks_page_size = 20
+search_page_size = 10
+
 
 @app.route("/")
 def search():
@@ -28,16 +31,21 @@ def results():
     page = request.args.get('page') or 0
 
     if query is not None:
-        page_start = int(page)*10
-        page_end = int(page)*10+10
+        page_start = int(page)*search_page_size
+        page_end = int(page)*search_page_size+search_page_size
 
+        results_count = Page.objects.search_text(query).order_by('$text_score').count()
         results = Page.objects.search_text(query).order_by('$text_score')[page_start:page_end]
 
+        page_numbers = min(int(results_count/search_page_size) + 1, 10)
         return render_template(
             'results.html',
             query=query,
             results=results,
             pages_count="{:,}".format(page_count),
+            results_count="{:,}".format(results_count),
+            page_numbers=page_numbers,
+            current_page_number=page,
         )
     else:
         abort(400)
@@ -47,8 +55,8 @@ def results():
 def rankings():
     global ranked_count
     page = request.args.get('page') or 0
-    page_start = int(page)*20
-    page_end = int(page)*20+20
+    page_start = int(page)*ranks_page_size
+    page_end = int(page)*ranks_page_size+ranks_page_size
 
     results = Website.objects.order_by('-ranking')[page_start:page_end]
 
@@ -56,6 +64,8 @@ def rankings():
         'rankings.html',
         results=results,
         ranked_count="{:,}".format(ranked_count),
+        page_numbers=10,
+        current_page_number=page,
     )
 
 

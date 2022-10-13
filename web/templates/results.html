@@ -9,7 +9,9 @@
         <a href="/">
 		    <text class="title_caption">Spyder Search</text>
         </a>
-		<text class="title">{{ query }}</text>
+        <form action="/search" method="GET">
+			<input name="q" value="{{ query }}" class="gradient_row_input title"/>
+		</form>
 	</div>
 
     {% if results|length > 1 %}
@@ -31,6 +33,23 @@
     {% endif %}
 
 	<div class="footer">
-	    <text class="title_caption">Searched {{ pages_count }} pages</text>
+	    <text class="title_caption">Found {{ results_count }} results in {{ pages_count }} pages</text>
 	</div>
+
+    {% if page_numbers|int() > 1 %}
+    <ul class="number_row rounded_border">
+        {% for page_number in range(page_numbers) %}
+        <li>
+            {% if page_number|int() == current_page_number|int() %}
+            <text class="number_row_text bold">{{page_number}}</text>
+            {% else %}
+            <a href="/search?q={{ query }}&page={{ page_number }}">
+                <text class="number_row_text">{{page_number}}</text>
+            </a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    {% endif %}
 {% endblock %}

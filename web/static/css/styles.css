@@ -64,14 +64,11 @@ textarea:focus, input:focus{
 }
 
 .header {
-    padding-left: 20px;
-    display: inline-grid;
+    padding: 0px 20px 0px 20px;
 }
 
 .footer {
-    padding: 20px;
-    padding-top: 0px;
-    display: inline-grid;
+    padding: 0px 20px 10px 20px;
 }
 
 .title {
@@ -87,10 +84,31 @@ textarea:focus, input:focus{
 	text-transform: uppercase;
 }
 
-.selector, .button, .text_input {
-	width: 150px;
-    font-size: 15pt;
-    font-family: 'Sans', Arial, sans-serif !important;
+.number_row {
+	list-style-type: none;
+	text-align: center;
+	width: fit-content;
+	margin: auto;
+	padding: 10px;
+}
+  
+.number_row li {
+	display: inline-block;
+	padding: 0px 15px 00px 15px;
+}
+
+.number_row_text {
+	color: black;
+	font-size: 15pt;
+}
+
+.rounded_border {
+	border: 1px solid lightgrey;
+	border-radius: 30px;
+}
+
+.bold {
+	font-weight: bold;
 }
 
 .blur {
