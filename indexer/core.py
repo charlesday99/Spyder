@@ -117,11 +117,8 @@ def process_page(page, html, verbose=False):
                 description = tag.attrs['content']
     
     if description is not None:
-        print(f"\nFound description: {description} \n")
         page.description = description[0:300].strip()
         page.save()
-
-    exit()
 
     # Iterate though all links
     for a_tag in soup.findAll('a'):
