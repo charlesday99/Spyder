@@ -104,14 +104,24 @@ def process_page(page, html, verbose=False):
     soup = BeautifulSoup(html, 'html.parser')
     website = page.domain
 
+    # Save title
     if soup.title is not None:
         page.title = soup.title.get_text()
         page.save()
 
-    description = soup.find("meta", property="og:description")
-    if description is not None and 'content' in description:
-        page.description = description['content'][0:300]
+    # Find and save description
+    description = None
+    for tag in soup.find_all("meta"):
+        if 'name' in tag.attrs and 'description' in tag.attrs['name']:
+            if 'content' in tag.attrs:
+                description = tag.attrs['content']
+    
+    if description is not None:
+        print(f"\nFound description: {description} \n")
+        page.description = description[0:300].strip()
         page.save()
+
+    exit()
 
     # Iterate though all links
     for a_tag in soup.findAll('a'):

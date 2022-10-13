@@ -6,10 +6,7 @@ StartLimitIntervalSec=500
 StartLimitBurst=5
 
 [Service]
-Restart=always
-RestartSec=5s
-RuntimeMaxSec=1d
-
+Restart=on-failure
 User=charles
 WorkingDirectory=/opt/spyder/tools
 ExecStart=/usr/bin/python3 /opt/spyder/tools/rank-websites.py

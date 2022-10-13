@@ -11,10 +11,8 @@ def worker(id, queue):
     while True:
         try:
             page = queue.get()
-
             print(f"[{id}] Requesting url: {page.url}")
             request_page(page)
-
         except Exception as e:
             log_exception(e)
         finally:
