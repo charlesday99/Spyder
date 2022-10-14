@@ -23,7 +23,7 @@ def worker_thread(id, queue):
 
 def main():
     global running
-    workers_count = 5
+    workers_count = 25
 
     # Load domain
     if len(sys.argv) != 2:

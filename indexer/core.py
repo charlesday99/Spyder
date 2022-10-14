@@ -6,7 +6,7 @@ import traceback
 import requests
 import re
 
-blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg|xlsx|xls|rss|gif|atom)$"
+blocked_files = "^.*\.(jpg|jpeg|gif|pdf|png|m3u8|usdz|mp4|mp3|mov|zip|dmg|gz|xml|whl|xz|exe|tgz|msi|pkg|deb|chm|tar|rst|txt|json|yaml|toml|py|cfg|md|doc|docx|git|svg|egg|xlsx|xls|rss|tif|pptx|c|h|ashx|sign|wav|csv|text|gif|atom)$"
 double_domains = ['.co.uk','.uk.com','org.uk','ac.uk','com.au','europa.eu','co.jp','com.br','edu.au','gov.au','com.tr','co.nz','co.za','com.cn','org.au']
 
 
