@@ -13,7 +13,7 @@ double_domains = ['.co.uk','.uk.com','org.uk','ac.uk','com.au','europa.eu','co.j
 def db_connect():
     with open('/etc/mongod.cred') as f:
         credentials = f.readlines()[0].strip()
-        connect(host="mongodb://{}@iterator.me:27017/data".format(credentials))
+        connect(host="mongodb://{}@78.110.170.126:27017/data".format(credentials))
         print('Connected to MongoDB!')
 
 

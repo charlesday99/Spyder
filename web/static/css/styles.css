@@ -127,4 +127,7 @@ textarea:focus, input:focus{
 	.gradient_row {
 		box-shadow: none;
 	}
+	.number_row_text {
+		color: white;
+	}
 }

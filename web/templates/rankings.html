@@ -15,7 +15,7 @@
     {% for website in results %}
 	<a href="{{ website.domain }}">
 		<div class="gradient_row">
-			<div class="gradient_row_title">{{ website.domain }}</div>
+			<div class="gradient_row_title">{{ website.domain|replace("https://", "")|replace("/", "") }}</div>
             <div class="gradient_row_caption">Score: {{ website.ranking }}</div>
 		</div>
 	</a>
