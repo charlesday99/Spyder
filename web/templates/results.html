@@ -16,7 +16,7 @@
 
     {% if results|length > 1 %}
     {% for page in results %}
-	<a href="{{ page.url }}">
+	<a href="/redirect/{{ page.id }}?search={{ search_id }}">
 		<div class="gradient_row">
 			<div class="gradient_row_title">{{ page.title }}</div>
             <div class="gradient_row_caption">{{ page.url }}</div>

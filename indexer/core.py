@@ -234,3 +234,16 @@ class Page(Document):
         if tag in self.tags:
             self.tags.remove(tag)
             self.save()
+
+
+class SearchQuery(Document):
+    text = StringField(required=True)
+    time = DateTimeField(required=True)
+    tags = ListField(StringField())
+
+
+class SearchRedirect(Document):
+    query = ReferenceField(SearchQuery, reverse_delete_rule=CASCADE, required=True)
+    page = ReferenceField(Page, reverse_delete_rule=CASCADE, required=True)
+    time = DateTimeField(required=True)
+    tags = ListField(StringField())

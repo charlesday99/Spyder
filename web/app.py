@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 from indexer.core import *
 
-from flask import Flask, render_template, request, abort, send_from_directory
+from flask import Flask, render_template, request, abort, send_from_directory, redirect
 from datetime import datetime, timedelta
 from threading import Thread
 import time
@@ -31,6 +31,8 @@ def results():
     page = request.args.get('page') or 0
 
     if query is not None:
+        search_query = SearchQuery(text=query, time=datetime.now()).save()
+
         page_start = int(page)*search_page_size
         page_end = int(page)*search_page_size+search_page_size
 
@@ -42,6 +44,7 @@ def results():
             'results.html',
             query=query,
             results=results,
+            search_id=search_query.id,
             pages_count="{:,}".format(page_count),
             results_count="{:,}".format(results_count),
             page_numbers=page_numbers,
@@ -67,6 +70,24 @@ def rankings():
         page_numbers=10,
         current_page_number=page,
     )
+
+
+@app.route("/redirect/<page_id>")
+def redirect_page(page_id):
+    search = SearchQuery.objects(id=request.args.get('search', ''))
+    page = Page.objects(id=page_id)
+
+    if len(page) == 1:
+        page = page[0]
+        if len(search) == 1:
+            SearchRedirect(
+                query=search[0],
+                page=page,
+                time=datetime.now()
+            ).save()
+        return redirect(page.url)
+    else:
+        abort(404)
 
 
 @app.route('/favicon.ico')
