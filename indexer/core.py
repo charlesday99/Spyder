@@ -173,7 +173,14 @@ def process_page(page, html, verbose=False):
 
 def request_page(page, verbose=False):
     try:
-        resp = requests.get(page.url, timeout=5)
+        resp = requests.get(
+            page.url,
+            timeout=5,
+            headers={
+                "Content-Type":"text",
+                "Accept": "text/*"
+            }
+        )
 
         if resp.status_code == 200 and 'Content-Type' in resp.headers:
             

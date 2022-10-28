@@ -15,12 +15,13 @@ def worker(id, queue):
             request_page(page)
         except Exception as e:
             log_exception(e)
+            db_connect()
         finally:
             queue.task_done()
 
 
 def main():
-    workers_count = 3
+    workers_count = 1
 
     # Create default website
     load_or_create_website(get_domain("https://bbc.co.uk/"))
